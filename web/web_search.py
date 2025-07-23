@@ -11,8 +11,11 @@ def search_hosun(hosun,name,direction,date,time):
     filter_date_df = filter_direction_df[filter_direction_df['평일/주말']==date]
     filter_time_df = filter_date_df[filter_date_df['시간대']==time]
     
-    list_result_df = filter_time_df['혼잡레벨']
-search_hosun('8호선',"암사","상행","평일","07:00")
+    list_result_df = filter_time_df['예측혼잡도'].tolist()
+    return list_result_df
+df=search_hosun('1호선','서울역','상행','평일','5:00')
+print(df)
+# 1호선 서울역 상행 평일 5:00
     
     
     

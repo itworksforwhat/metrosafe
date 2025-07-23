@@ -13,7 +13,7 @@ st.set_page_config(layout="wide")
 def search_hosun(hosun,name,direction,date,time):
     print(hosun,name,direction,date,time)
     #파일 이름 바뀌면 여기도 (절대경로에요 여기를 바꿔주세요)
-    df = pd.read_csv('../test/'+hosun+'_혼잡도_전체예측결과.csv', encoding='utf-8-sig')
+    df = pd.read_csv('../model/test/'+hosun+'_혼잡도_전체예측결과.csv', encoding='utf-8-sig')
     
     #데이터 서치
     filter_name_df = df[df['역명']==name]

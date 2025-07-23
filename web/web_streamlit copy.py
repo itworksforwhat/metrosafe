@@ -122,9 +122,11 @@ car_count = hosun_car_count.get(select_hosun, 8)
 print(select_hosun,select_name,select_direction,select_weekend,select_time)
 congestion_data = search_hosun(select_hosun,select_name,select_direction,select_weekend,select_time)
 cars_with_data = [(i, congestion_data[i]) for i in range(car_count)]
-relaxed_cars = [(idx, p) for idx, p in cars_with_data if get_label(p) == "여유"]
-relaxed_cars.sort(key=lambda x: x[1])
-recommended_car_indices = [idx for idx, _ in relaxed_cars[:2]]
+# ----------------------- 여기만 변경(추천칸 선택 부분!!) -----------------------
+cars_with_data = [(i, congestion_data[i]) for i in range(car_count)]
+cars_with_data.sort(key=lambda x: x[1])
+recommended_car_indices = [idx for idx, _ in cars_with_data[:2]]
+# --------------------------------------------------------------------------
 
 # 상단 정보 및 추천 텍스트 출력
 info_bar = f"""

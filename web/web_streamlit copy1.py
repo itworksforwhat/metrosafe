@@ -1,6 +1,5 @@
 import streamlit as st
 import random
-import pandas as pd
 from matplotlib import rc
 from streamlit.components.v1 import html
 
@@ -9,21 +8,6 @@ from streamlit.components.v1 import html
 # ----------------------------
 rc('font', family="Malgun Gothic")
 st.set_page_config(layout="wide")
-
-def search_hosun(hosun,name,direction,date,time):
-    print(hosun,name,direction,date,time)
-    #파일 이름 바뀌면 여기도 (절대경로에요 여기를 바꿔주세요)
-    df = pd.read_csv('C:/Users/user/Desktop/project/metrosafe/model/test/'+hosun+'_혼잡도_전체예측결과.csv', encoding='utf-8-sig')
-    
-    #데이터 서치
-    filter_name_df = df[df['역명']==name]
-    filter_direction_df = filter_name_df[filter_name_df['방향']==direction]
-    filter_date_df = filter_direction_df[filter_direction_df['평일/주말']==date]
-    filter_time_df = filter_date_df[filter_date_df['시간대']==time]
-    
-    list_result_df = filter_time_df['예측혼잡도'].tolist()
-    print(filter_time_df)
-    return list_result_df
 
 # 배경화면
 page_bg_img = '''
@@ -67,7 +51,7 @@ station_name = {
 }
 
 hosun_car_count = { '1호선': 10, '2호선': 10, '3호선': 10, '4호선': 10, '5호선': 8, '6호선': 8, '7호선': 8, '8호선': 8 }
-station_time = [f"{i:02d}:00" for i in list(range(6, 24)) + [0]]
+station_time = [f"{i}:00" for i in range(5, 24)] + ["0:00"]
 
 st.sidebar.title("선택 구간")
 select_hosun = st.sidebar.selectbox("호선", list(station_name.keys()))
@@ -107,20 +91,19 @@ html(html_content, height=150, scrolling=False)
 
 # 추천 칸 판단 함수
 def get_color(p):
-    if p <= 100: return "#70ad47"
-    elif p <= 200: return "#ffc000"
-    elif p <= 250: return "#ff7e00"
+    if p < 30: return "#70ad47"
+    elif p < 50: return "#ffc000"
+    elif p < 80: return "#ff7e00"
     else: return "#ff0000"
 
 def get_label(p):
-    if p <= 100: return "여유"
-    elif p <= 200: return "보통"
-    elif p <= 250: return "혼잡"
+    if p < 30: return "여유"
+    elif p < 50: return "보통"
+    elif p < 80: return "혼잡"
     else: return "매우혼잡"
 
 car_count = hosun_car_count.get(select_hosun, 8)
-print(select_hosun,select_name,select_direction,select_weekend,select_time)
-congestion_data = search_hosun(select_hosun,select_name,select_direction,select_weekend,select_time)
+congestion_data = [random.randint(10, 100) for _ in range(car_count)]
 cars_with_data = [(i, congestion_data[i]) for i in range(car_count)]
 relaxed_cars = [(idx, p) for idx, p in cars_with_data if get_label(p) == "여유"]
 relaxed_cars.sort(key=lambda x: x[1])

@@ -16,7 +16,7 @@ def search_hosun(hosun, name, direction, date, time):
 
     # 파일 이름 바뀌면 여기도 (절대경로에요 여기를 바꿔주세요)
     df = pd.read_csv(
-        "./model/data/ai_출력/" + hosun + "_혼잡도예측_전체케이스.csv",
+        "./model/data/api_데이터/날짜합친" + hosun + ".csv",
         encoding="utf-8-sig",
     )
     # 데이터 서치

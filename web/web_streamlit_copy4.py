@@ -14,27 +14,33 @@ st.set_page_config(layout="wide")
 
 def search_hosun(hosun, name, direction, date, time):
 
-    # 파일 이름 바뀌면 여기도 (절대경로에요 여기를 바꿔주세요)
-    df = pd.read_csv(
-        "./model/data/api_데이터/날짜합친" + hosun + ".csv",
-        encoding="utf-8-sig",
-    )
-    # 데이터 서치
-    filter_name_df = df[df["역명"] == name]
-    if direction == "상행":
-        x = 0
-    else:
-        x = 1
-    filter_direction_df = filter_name_df[filter_name_df["상하행"] == x]
-    wek_name = ["월", "화", "수", "목", "금"]
-    if date in wek_name:
-        x = 0
-    else:
-        x = 1
+    direction_map = {"상행": 0, "하행": 1}
+    weekday_map = {"평일": ["MON", "TUE", "WED", "THU", "FRI"], "주말": ["SAT", "SUN"]}
 
-    filter_date_df = filter_direction_df[filter_direction_df["평일주말"] == x]
-    filter_time_df = filter_date_df[filter_date_df["시간"] == int(time.split(":")[0])]
-    list_result_df = filter_time_df["혼잡도리스트"].values[0]
+    df = pd.read_csv(
+        f"./model/data/api_데이터/날짜합친{hosun}.csv", encoding="euc-kr" or "utf-8"
+    )
+
+    filter_name_df = df[df["역명"] == name]
+    filter_direction_df = filter_name_df[
+        filter_name_df["상하행"] == direction_map[direction]
+    ]
+    filter_day_df = filter_direction_df[
+        filter_direction_df["요일"].isin(weekday_map[day_type])
+    ]
+    hour, minute = map(int, time.split(":"))
+    filter_time_df = filter_day_df[
+        (filter_day_df["시간"] == hour) & (filter_day_df["분"] == minute)
+    ]
+
+    list_result_df = []
+    for s in filter_time_df["congestionCar"]:
+        try:
+            v = eval(s)  # 또는 ast.literal_eval(s)
+            list_result_df = v
+        except:
+            continue
+
     return list_result_df
 
 

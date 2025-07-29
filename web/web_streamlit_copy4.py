@@ -26,7 +26,7 @@ def search_hosun(hosun, name, direction, date, time):
         filter_name_df["상하행"] == direction_map[direction]
     ]
     filter_day_df = filter_direction_df[
-        filter_direction_df["요일"].isin(weekday_map[day_type])
+        filter_direction_df["요일"].isin(weekday_map[date])]
     ]
     hour, minute = map(int, time.split(":"))
     filter_time_df = filter_day_df[

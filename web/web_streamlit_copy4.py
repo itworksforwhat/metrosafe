@@ -17,9 +17,7 @@ def search_hosun(hosun, name, direction, date, time):
     direction_map = {"상행": 0, "하행": 1}
     weekday_map = {"평일": ["MON", "TUE", "WED", "THU", "FRI"], "주말": ["SAT", "SUN"]}
 
-    df = pd.read_csv(
-        f"./model/data/api_데이터/날짜합친{hosun}.csv", encoding="euc-kr" or "utf-8"
-    )
+    df = pd.read_csv(f"./model/data/api_데이터/날짜합친{hosun}.csv", encoding="none")
 
     filter_name_df = df[df["역명"] == name]
     filter_direction_df = filter_name_df[
@@ -426,7 +424,7 @@ car_count = hosun_car_count.get(select_hosun, 8)
 congestion_data = search_hosun(
     select_hosun, select_name, select_direction, select_weekend, select_time
 )
-congestion_data = ast.literal_eval(congestion_data)
+# congestion_data = ast.literal_eval(congestion_data)
 cars_with_data = [(i, congestion_data[i]) for i in range(car_count)]
 # ----------------------- 여기만 변경(추천칸 선택 부분!!) -----------------------
 cars_with_data = [(i, congestion_data[i]) for i in range(car_count)]

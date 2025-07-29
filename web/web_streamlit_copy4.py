@@ -364,7 +364,9 @@ hosun_car_count = {
     "7호선": 8,
     "8호선": 6,
 }
-station_time = [f"{i:02d}:00" for i in list(range(6, 24)) + [0]]
+station_time = [
+    f"{h:02d}:{m:02d}" for h in list(range(6, 24)) + [0] for m in range(0, 60, 10)
+]
 
 st.sidebar.title("선택 구간")
 select_hosun = st.sidebar.selectbox("호선", list(station_name.keys()))

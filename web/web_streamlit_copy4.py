@@ -17,7 +17,14 @@ def search_hosun(hosun, name, direction, date, time):
     direction_map = {"상행": 0, "하행": 1}
     weekday_map = {"평일": ["MON", "TUE", "WED", "THU", "FRI"], "주말": ["SAT", "SUN"]}
 
-    df = pd.read_csv(f"./model/data/api_데이터/날짜합친{hosun}.csv", encoding="none")
+    try:
+        df = pd.read_csv(
+            f"./model/data/api_데이터/날짜합친{hosun}.csv", encoding="euc-kr"
+        )
+    except UnicodeDecodeError:
+        df = pd.read_csv(
+            f"./model/data/api_데이터/날짜합친{hosun}.csv", encoding="utf-8"
+        )
 
     filter_name_df = df[df["역명"] == name]
     filter_direction_df = filter_name_df[

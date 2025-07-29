@@ -433,8 +433,8 @@ car_count = hosun_car_count.get(select_hosun, 8)
 congestion_data = search_hosun(
     select_hosun, select_name, select_direction, select_weekend, select_time
 )
-# congestion_data = ast.literal_eval(congestion_data)
-cars_with_data = [(i, congestion_data[i]) for i in range(car_count)]
+
+
 # ----------------------- 여기만 변경(추천칸 선택 부분!!) -----------------------
 cars_with_data = [(i, congestion_data[i]) for i in range(car_count)]
 cars_with_data.sort(key=lambda x: x[1])

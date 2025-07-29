@@ -26,27 +26,44 @@ def search_hosun(hosun, name, direction, date, time):
             f"./model/data/api_데이터/날짜합친{hosun}.csv", encoding="utf-8"
         )
 
-    filter_name_df = df[df["역명"] == name]
-    filter_direction_df = filter_name_df[
-        filter_name_df["상하행"] == direction_map[direction]
+    # 10분 단위 타임리스트 생성 (station_time 리스트와 완전 동일하게!)
+    times = [
+        f"{h:02d}:{m:02d}" for h in list(range(6, 24)) + [0] for m in range(0, 60, 10)
     ]
-    filter_day_df = filter_direction_df[
-        filter_direction_df["요일"].isin(weekday_map[date])
-    ]
-    hour, minute = map(int, time.split(":"))
-    filter_time_df = filter_day_df[
-        (filter_day_df["시간"] == hour) & (filter_day_df["분"] == minute)
-    ]
+    try:
+        time_idx = times.index(time)
+    except ValueError:
+        time_idx = len(times) - 1  # 만약 time이 없을 경우 마지막 index로
 
-    list_result_df = []
-    for s in filter_time_df["congestionCar"]:
-        try:
-            v = eval(s)  # 또는 ast.literal_eval(s)
-            list_result_df = v
-        except:
-            continue
+    # 현재 선택 시간~06:00까지 역순으로 반복하며 직전 데이터 탐색
+    for idx in range(time_idx, -1, -1):
+        h, m = map(int, times[idx].split(":"))
+        filter_name_df = df[df["역명"] == name]
+        filter_direction_df = filter_name_df[
+            filter_name_df["상하행"] == direction_map[direction]
+        ]
+        filter_day_df = filter_direction_df[
+            filter_direction_df["요일"].isin(weekday_map[date])
+        ]
+        filter_time_df = filter_day_df[
+            (filter_day_df["시간"] == h) & (filter_day_df["분"] == m)
+        ]
 
-    return list_result_df
+        if not filter_time_df.empty:
+            list_result_df = []
+            for s in filter_time_df["congestionCar"]:
+                try:
+                    # eval(s) 대신 안전한 ast.literal_eval 사용
+                    v = ast.literal_eval(s)
+                    list_result_df = v
+                except Exception:
+                    continue
+            if list_result_df:
+                return list_result_df  # 바로 return
+
+    # ------- [수정 끝: 위까지가 추가/수정된 부분입니다] -------
+
+    return []  # 끝까지 없으면 빈 리스트 반환
 
 
 # 배경화면

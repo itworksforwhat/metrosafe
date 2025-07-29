@@ -8,33 +8,38 @@ import ast
 # ----------------------------
 # 기본 설정
 # ----------------------------
-rc('font', family="Malgun Gothic")
+rc("font", family="Malgun Gothic")
 st.set_page_config(layout="wide")
 
-def search_hosun(hosun,name,direction,date,time):
-    
-    #파일 이름 바뀌면 여기도 (절대경로에요 여기를 바꿔주세요)
-    df = pd.read_csv("C:/Users/user/Desktop/메트로세이프/metrosafe/model/data/ai_출력/"+hosun+'_혼잡도예측_전체케이스.csv', encoding='utf-8-sig')
-    #데이터 서치
-    filter_name_df = df[df['역명']==name]
-    if direction == "상행":
-        x=0
-    else :
-        x=1
-    filter_direction_df = filter_name_df[filter_name_df['상하행']==x]
-    wek_name=['월','화','수','목','금']
-    if date in wek_name:
-        x=0
-    else:
-        x=1
 
-    filter_date_df = filter_direction_df[filter_direction_df['평일주말']==x]
-    filter_time_df = filter_date_df[filter_date_df['시간']==int(time.split(':')[0])]
-    list_result_df = filter_time_df['혼잡도리스트'].values[0]
+def search_hosun(hosun, name, direction, date, time):
+
+    # 파일 이름 바뀌면 여기도 (절대경로에요 여기를 바꿔주세요)
+    df = pd.read_csv(
+        "/model/data/ai_출력/" + hosun + "_혼잡도예측_전체케이스.csv",
+        encoding="utf-8-sig",
+    )
+    # 데이터 서치
+    filter_name_df = df[df["역명"] == name]
+    if direction == "상행":
+        x = 0
+    else:
+        x = 1
+    filter_direction_df = filter_name_df[filter_name_df["상하행"] == x]
+    wek_name = ["월", "화", "수", "목", "금"]
+    if date in wek_name:
+        x = 0
+    else:
+        x = 1
+
+    filter_date_df = filter_direction_df[filter_direction_df["평일주말"] == x]
+    filter_time_df = filter_date_df[filter_date_df["시간"] == int(time.split(":")[0])]
+    list_result_df = filter_time_df["혼잡도리스트"].values[0]
     return list_result_df
 
+
 # 배경화면
-page_bg_img = '''
+page_bg_img = """
 <style>
 [data-testid="stAppViewContainer"] {
   position: relative;
@@ -57,14 +62,14 @@ page_bg_img = '''
   pointer-events: none;
 }
 </style>
-'''
+"""
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ----------------------------
 # 역 데이터 및 열차칸 수 설정
 # ----------------------------
 station_name = {
-      "1호선": [
+    "1호선": [
         "서울역",
         "시청역",
         "종각역",
@@ -87,7 +92,6 @@ station_name = {
         "왕십리역",
         "한양대역",
         "뚝섬역",
-        "성수역",
         "건대입구역",
         "구의역",
         "강변역",
@@ -120,13 +124,6 @@ station_name = {
         "이대역",
         "아현역",
         "충정로역",
-        "용답역",
-        "신답역",
-        "신설동역",
-        "도림천역",
-        "양천구청역",
-        "신정네거리역",
-        "용두역",
     ],
     "3호선": [
         "지축역",
@@ -187,7 +184,6 @@ station_name = {
         "신용산역",
         "이촌역",
         "동작역",
-        "총신대입구역",
         "사당역",
         "남태령역",
     ],
@@ -344,33 +340,43 @@ station_name = {
         "신흥역",
         "수진역",
         "모란역",
-    ]}
+    ],
+}
 
-hosun_car_count = { '1호선': 10, '2호선': 10, '3호선': 10, '4호선': 10, '5호선': 8, '6호선': 8, '7호선': 8, '8호선': 8 }
+hosun_car_count = {
+    "1호선": 10,
+    "2호선": 10,
+    "3호선": 10,
+    "4호선": 10,
+    "5호선": 8,
+    "6호선": 8,
+    "7호선": 8,
+    "8호선": 6,
+}
 station_time = [f"{i:02d}:00" for i in list(range(6, 24)) + [0]]
 
 st.sidebar.title("선택 구간")
 select_hosun = st.sidebar.selectbox("호선", list(station_name.keys()))
 select_name = st.sidebar.selectbox("역명", station_name[select_hosun])
 select_time = st.sidebar.selectbox("시간", station_time)
-select_direction = st.sidebar.selectbox("상/하행", ['상행', '하행'])
-select_weekend = st.sidebar.selectbox("평일/주말", ['평일', '주말'])
+select_direction = st.sidebar.selectbox("상/하행", ["상행", "하행"])
+select_weekend = st.sidebar.selectbox("평일/주말", ["평일", "주말"])
 
 hosun_colors = {
-    '1호선': '#0052A4',
-    '2호선': '#009D3E',
-    '3호선': '#EF7C1C',
-    '4호선': '#00A5DE',
-    '5호선': '#996CAC',
-    '6호선': '#CD7C2F',
-    '7호선': '#747F00',
-    '8호선': '#E6186C'
+    "1호선": "#0052A4",
+    "2호선": "#009D3E",
+    "3호선": "#EF7C1C",
+    "4호선": "#00A5DE",
+    "5호선": "#996CAC",
+    "6호선": "#CD7C2F",
+    "7호선": "#747F00",
+    "8호선": "#E6186C",
 }
 
-line_color = hosun_colors.get(select_hosun, '#555')
+line_color = hosun_colors.get(select_hosun, "#555")
 
 # 상단 UI
-html_content = f'''
+html_content = f"""
 <div style="position: relative; width: 100%; display: flex; justify-content: center; margin-top: 10px; margin-bottom: 50px;">
     <div style="position: absolute; top: 50%; left: 0; width: 100%; height: 50px; background-color: {line_color}; transform: translateY(-50%); z-index: 0; border-radius: 40px;"></div>
     <div style="display: flex; align-items: center; background-color: white; padding: 20px 70px 20px 100px; border-radius: 50px; border: 10px solid {line_color}; z-index: 1; position: relative; min-width: 400px; max-width: 700px; box-shadow: 3px 3px 10px rgba(0,0,0,0.15); outline: 4px solid white; outline-offset: 0px;">
@@ -382,26 +388,39 @@ html_content = f'''
         </div>
     </div>
 </div>
-'''
+"""
 html(html_content, height=150, scrolling=False)
+
 
 # 추천 칸 판단 함수
 def get_color(p):
-    if p <= 40: return "#70ad47"
-    elif p <= 70: return "#ffc000"
-    elif p <= 110: return "#ff7e00"
-    else: return "#ff0000"
+    if p <= 40:
+        return "#70ad47"
+    elif p <= 70:
+        return "#ffc000"
+    elif p <= 110:
+        return "#ff7e00"
+    else:
+        return "#ff0000"
+
 
 def get_label(p):
-    if p <= 40: return "여유"
-    elif p <= 70: return "보통"
-    elif p <= 110: return "혼잡"
-    else: return "매우혼잡"
+    if p <= 40:
+        return "여유"
+    elif p <= 70:
+        return "보통"
+    elif p <= 110:
+        return "혼잡"
+    else:
+        return "매우혼잡"
+
 
 car_count = hosun_car_count.get(select_hosun, 8)
 
-congestion_data = search_hosun(select_hosun,select_name,select_direction,select_weekend,select_time) 
-congestion_data=ast.literal_eval(congestion_data)
+congestion_data = search_hosun(
+    select_hosun, select_name, select_direction, select_weekend, select_time
+)
+congestion_data = ast.literal_eval(congestion_data)
 cars_with_data = [(i, congestion_data[i]) for i in range(car_count)]
 # ----------------------- 여기만 변경(추천칸 선택 부분!!) -----------------------
 cars_with_data = [(i, congestion_data[i]) for i in range(car_count)]
@@ -449,4 +468,3 @@ for i in range(car_count):
 
 train_html += "</div>"
 html(train_html, height=200, scrolling=False)
-
